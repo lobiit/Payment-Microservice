@@ -8,7 +8,7 @@ from fastapi.background import BackgroundTasks
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://127.0.0.1:3000'],
+    allow_origins=['http://localhost:3001'],
     allow_methods=['*'],
     allow_headers=['*']
 )
@@ -16,7 +16,7 @@ app.add_middleware(
 redis = get_redis_connection(
     host="redis-10343.c90.us-east-1-3.ec2.cloud.redislabs.com",
     port=10343,
-
+    password="jVpQZ2HxAgYO9KYlfUmM0FfDKyCPY8em",
     decode_responses=True
 )
 
@@ -62,3 +62,4 @@ def order_complete(order: Order):
     time.sleep(5)
     order.status = 'completed'
     order.save()
+    redis.xadd('order_completed', order.dict(), '*')
